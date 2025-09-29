@@ -3,7 +3,10 @@ import { MdPlace, MdPhone, MdEmail, MdAccessTime } from 'react-icons/md';
 
 export default function Card({ setor, titulo, desc, local, tel, mail, horario }) {
     return (
-        <div className="bg-white rounded-xl shadow p-6 w-full h-80 max-w-md shadow-lg mt-10 mx-auto border border-black/10 border-[1px]">
+        <div className="
+            bg-white rounded-xl shadow p-6 w-full h-80 max-w-md mt-10 mx-auto border border-black/10
+            transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:border-blue-500 cursor-pointer
+        ">
             <div>
                 <div className='flex justify-between items-center'>
                     <h2 className="text-xl font-bold mb-1">{titulo}</h2>
@@ -29,7 +32,7 @@ export default function Card({ setor, titulo, desc, local, tel, mail, horario })
                 <p className="flex items-center gap-2">
                     <MdAccessTime /> {horario}
                 </p>
-                <div className='bg-white p-2 rounded-lg w-fit mt-2 border border-black/10 border-[1px]'>
+                <div className='bg-white p-2 rounded-lg w-fit mt-2 border border-black/10'>
                     <p className='text-[13px]'>{setor}</p>
                 </div>
             </div>
