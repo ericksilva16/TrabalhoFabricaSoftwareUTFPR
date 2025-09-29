@@ -52,7 +52,7 @@ export default function Menu() {
         </nav>
 
         <div className='mr-auto mt-10 w-full'>
-          <h2 className='text-2xl font-bold'>Informações da {abas.find(a => a.key === abaAtiva)?.label}</h2>
+          <h2 className='text-2xl font-bold'>{abas.find(a => a.key === abaAtiva)?.label}</h2>
           <div className='bg-gray-200 mt-5 rounded-lg w-[100%] p-3'>
             <input type="text" placeholder='Buscar por nome ou descrição' className='w-full outline-none' />
           </div>
