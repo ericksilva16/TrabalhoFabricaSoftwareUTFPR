@@ -1,4 +1,5 @@
 import React from "react"
+import NewsCard from "./ui/NewsCard";
 
 export default function Noticias() {
     return (
@@ -55,10 +56,11 @@ export default function Noticias() {
                 <div className="h-[60vh]">
                     <h1 className="text-6xl mt-20">Avisos</h1>
                     <div>
-                        
+                        <NewsCard />
                     </div>
                 </div>
             </div>
+
         </>
     );
 }

@@ -3,7 +3,6 @@ import Header from './components/header';
 import SideBar from './components/ui/SideBar';
 import Menu from './components/Menu';
 import Noticias from './components/Noticias'
-
 export default function App() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [closing, setClosing] = useState(false);
