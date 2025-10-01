@@ -3,6 +3,10 @@ import { MdOutlineFilterAlt } from 'react-icons/md';
 import Card from './ui/Card';
 import Universidade from './Universidade';
 import Noticias from './Noticias';
+import Oportunidades from './Oportunidades';
+import Estagios from './Estagios';
+import Eventos from './Eventos';
+
 
 export default function Menu() {
   const [abaAtiva, setAbaAtiva] = useState("universidade");
@@ -67,9 +71,16 @@ export default function Menu() {
         {conteudos[abaAtiva]?.map(item => (
           <Universidade key={item.id} item={item} />
         ))}
+
+        {abaAtiva === "noticias" && <Noticias />}
+      {abaAtiva === "oportunidades" && <Oportunidades />}
+      {abaAtiva === "estagios" && <Estagios />}
+      {abaAtiva === "eventos" && <Eventos/>}
+      
       </div>
 
-      {abaAtiva === "noticias" && <Noticias />}
+      
+      
     </>
   );
 }
