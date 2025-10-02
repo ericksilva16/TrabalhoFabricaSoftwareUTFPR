@@ -53,14 +53,25 @@ export default function Noticias() {
                     </div>
                 </div>
 
-                <div className="h-[60vh]">
-                    <h1 className="text-6xl mt-20">Avisos</h1>
-                    <div>
+                <div className="h-auto mt-20 px-5">
+                    <div className="grid gap-8 
+                                    sm:grid-cols-1 
+                                    md:grid-cols-2 
+                                    lg:grid-cols-3 
+                                    xl:grid-cols-4 
+                                    2xl:grid-cols-5">
+                        <NewsCard />
+                        <NewsCard />
+                        <NewsCard />
+                        <NewsCard />
                         <NewsCard />
                     </div>
                 </div>
-            </div>
 
+                <div>
+                    <h1>Avisos</h1>
+                </div>
+            </div>
         </>
     );
 }
