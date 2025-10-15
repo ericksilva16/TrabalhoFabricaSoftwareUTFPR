@@ -4,14 +4,14 @@ import NewsCard from "./ui/NewsCard";
 export default function Noticias() {
     return (
         <>
-            <div className="w-[80%] h-[650px] mx-auto">
+            <div className="w-[100%] h-[650px] mx-auto">
                 <h1 className="text-6xl mb-6">Notícias da Semana</h1>
 
                 <div className="flex gap-4 h-full">
                     {/* div notícia principal à esquerda */}
                     <div className="relative flex-1 rounded-lg flex items-start justify-center flex-col 
                     bg-[url(./assets/news-img.jpg)] bg-cover bg-center bg-no-repeat
-                    transform transition duration-200 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
+                    transform transition duration-200 hover:-translate-y-1 hover:shadow-lg cursor-pointer h-176">
                         <div className="absolute inset-0 bg-black/50 rounded-lg"></div>
                         <div className="relative w-[80%] mt-auto p-15">
                             <h2 className="text-white mb-5 text-3xl font-semibold">Notícia 1</h2>
@@ -53,13 +53,14 @@ export default function Noticias() {
                     </div>
                 </div>
 
-                <div className="h-auto mt-20 px-5">
+                <div className="h-auto mt-20 px-5 w-[100%]">
                     <div className="grid gap-8 
                                     sm:grid-cols-1 
                                     md:grid-cols-2 
                                     lg:grid-cols-3 
                                     xl:grid-cols-4 
-                                    2xl:grid-cols-5">
+                                    2xl:grid-cols-5
+                                    justify-start">
                         <NewsCard />
                         <NewsCard />
                         <NewsCard />

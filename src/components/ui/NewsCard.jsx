@@ -4,7 +4,7 @@ import authorPhoto from "../../assets/author-photo.jpg";
 
 export default function NewsCard() {
   return (
-    <div className="w-80 bg-white rounded-3xl shadow p-5 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2 cursor-pointer">
+    <div className="w-70 bg-white rounded-3xl shadow p-5 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2 cursor-pointer">
       {/* Topo */}
       <div className="flex items-center text-sm text-gray-500">
         <p className="font-semibold">BLOG</p>
