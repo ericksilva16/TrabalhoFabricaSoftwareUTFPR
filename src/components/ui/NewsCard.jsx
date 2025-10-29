@@ -39,7 +39,7 @@ export default function NewsCard() {
           alt="Autor"
           className="w-8 h-8 rounded-full mr-2 border border-gray-200"
         />
-        <p className="text-gray-700 text-sm">Erinaldo Pereira</p>
+        <p className="text-gray-700 text-sm">Autor</p>
       </div>
     </div>
   );
