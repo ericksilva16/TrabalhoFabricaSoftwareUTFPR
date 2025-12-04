@@ -4,7 +4,7 @@ import authorPhoto from "../../assets/author-photo.jpg";
 
 export default function NewsCard() {
   return (
-    <div className="w-70 bg-white rounded-3xl shadow p-5 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2 cursor-pointer">
+    <div className="w-full bg-white rounded-3xl shadow p-4 sm:p-5 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2 cursor-pointer">
       {/* Topo */}
       <div className="flex items-center text-sm text-gray-500">
         <p className="font-semibold">BLOG</p>
@@ -13,13 +13,13 @@ export default function NewsCard() {
 
       {/* Título */}
       <div className="mt-2">
-        <h1 className="text-lg font-semibold text-gray-900">
+        <h1 className="text-lg sm:text-xl font-semibold text-gray-900">
           Lorem Ipsom Dolor
         </h1>
       </div>
 
       {/* Imagem */}
-      <div className="w-full h-48 mt-3 overflow-hidden rounded-xl">
+      <div className="w-full h-44 sm:h-48 mt-3 overflow-hidden rounded-xl">
         <img
           className="w-full h-full object-cover transform transition-transform duration-500 ease-in-out hover:scale-110"
           src={newsPhoto}
@@ -28,7 +28,7 @@ export default function NewsCard() {
       </div>
 
       {/* Subtítulo */}
-      <div className="mt-4 font-semibold text-gray-900 text-sm">
+      <div className="mt-4 font-semibold text-gray-900 text-sm sm:text-base">
         Luiz Gustavo é eleito melhor aluno da UTFPR
       </div>
 

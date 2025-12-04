@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./components/Header";
 import SideBar from "./components/ui/SideBar";
 import Menu from "./components/Menu";
 import AdminPainel from "./components/AdminPainel";
+import { isAdmin as checkIsAdmin } from './utils/auth';
 
 export default function App() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [modoAdmin, setModoAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [user, setUser] = useState(null);
   const [closing, setClosing] = useState(false);
   const [fade, setFade] = useState(false);
 
@@ -33,14 +36,39 @@ export default function App() {
         setFade(false);
       }, 350);
     } else {
-      setModoAdmin(true);
+      // Only allow toggling into admin mode if client detects admin role
+      if (isAdmin) setModoAdmin(true);
     }
   };
+
+  useEffect(() => {
+    // On mount, check whether logged user is admin
+    try {
+      setIsAdmin(checkIsAdmin());
+      // restore user from localStorage if present
+      const raw = localStorage.getItem('user');
+      if (raw) {
+        try { setUser(JSON.parse(raw)); } catch (e) { setUser(null); }
+      }
+    } catch (e) {
+      setIsAdmin(false);
+    }
+  }, []);
+
+  function handleLogout() {
+    try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    } catch (e) {}
+    setUser(null);
+    setIsAdmin(false);
+    setModoAdmin(false);
+  }
 
   return (
     <div className="relative min-h-screen bg-gray-50">
       {/* Cabeçalho com dois botões */}
-      <Header onLoginClick={handleOpenLogin} onAdminClick={handleToggleAdmin} />
+      <Header onLoginClick={handleOpenLogin} onAdminClick={handleToggleAdmin} isAdmin={isAdmin} user={user} onLogout={handleLogout} />
 
       {/* Conteúdo principal */}
       <div
@@ -80,7 +108,13 @@ export default function App() {
                 closing ? "animate-slide-out" : "animate-slide-in"
               }`}
             >
-              <SideBar />
+              <SideBar onClose={handleCloseLogin} onLoginSuccess={(data) => { 
+                // data is expected to be { user, token }
+                try { localStorage.setItem('user', JSON.stringify(data.user)); } catch (e) {}
+                setUser(data.user);
+                setIsAdmin(checkIsAdmin());
+                handleCloseLogin();
+              }} />
             </div>
           </div>
         </>

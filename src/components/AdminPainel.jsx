@@ -1,13 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FormNovaVaga from "./FormNovaVaga";
 import FormNovaNoticia from "./FormNovaNoticia";
 import FormNovaInfo from "./FormNovaInfo";
+import AdminAvisos from "./AdminAvisos";
+import AdminOportunidades from "./AdminOportunidades";
+import { isAdmin } from '../utils/auth';
 
 export default function AdminPainel() {
   const [abaAtiva, setAbaAtiva] = useState("noticia");
 
+  useEffect(() => {
+    // If the client is not admin, redirect to the main page and hide the panel
+    if (!isAdmin()) {
+      // Ensure the app resets to non-admin view by reloading to root
+      window.location.replace(window.location.origin + '/');
+    }
+  }, []);
+
   const abas = [
     { key: "noticia", label: "Nova Notícia" },
+    { key: "oportunidades", label: "Oportunidades" },
+    { key: "avisos", label: "Avisos" },
     { key: "vaga", label: "Nova Vaga de Estágio" },
     // removi a aba "evento" temporariamente, pois o form não existe ainda
     { key: "info", label: "Nova Informação" },
@@ -17,6 +30,10 @@ export default function AdminPainel() {
     switch (abaAtiva) {
       case "noticia":
         return <FormNovaNoticia />;
+      case "oportunidades":
+        return <AdminOportunidades />;
+      case "avisos":
+        return <AdminAvisos />;
       case "vaga":
         return <FormNovaVaga />;
       // caso queira adicionar o evento depois, basta criar o arquivo FormNovoEvento.jsx

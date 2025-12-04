@@ -2,6 +2,8 @@ import React, { useState, useMemo } from "react";
 import { MdOutlineFilterAlt } from "react-icons/md";
 import Card from "./ui/Card.jsx"; 
 import Noticias from "./Noticias.jsx"; 
+import Estagios from "./Estagios.jsx";
+import Oportunidades from "./Oportunidades.jsx";
 
 const conteudos = {
   universidade: [
@@ -284,7 +286,7 @@ export default function Menu() {
   };
 
   return (
-    <div className="w-[80%] flex flex-col items-center mx-auto mt-10">
+    <div className="w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] flex flex-col items-center mx-auto mt-10">
       <nav className="bg-gray-300 p-1 mt-5 w-full mx-auto rounded-2xl">
         <ul className="flex space-x-2">
           {abas.map((aba) => (
@@ -308,7 +310,7 @@ export default function Menu() {
           {abas.find((a) => a.key === abaAtiva)?.label}
         </h2>
         
-        {abaAtiva !== 'noticias' && (
+        {abaAtiva !== 'noticias' && abaAtiva !== 'estagios' && abaAtiva !== 'oportunidades' && (
           <>
             <div className="bg-gray-200 mt-5 rounded-lg w-full p-3">
               <input
@@ -330,6 +332,14 @@ export default function Menu() {
           <div className="col-span-1 md:col-span-2 lg:col-span-3">
             <Noticias />
           </div>
+        ) : abaAtiva === "estagios" ? (
+          <div className="col-span-1 md:col-span-2 lg:col-span-3">
+            <Estagios />
+          </div>
+        ) : abaAtiva === "oportunidades" ? (
+          <div className="col-span-1 md:col-span-2 lg:col-span-3">
+            <Oportunidades />
+          </div>
         ) : (
           filteredContent.map((item) => (
             <Card
@@ -345,7 +355,7 @@ export default function Menu() {
           ))
         )}
         
-        {abaAtiva !== 'noticias' && filteredContent.length === 0 && (
+        {abaAtiva !== 'noticias' && abaAtiva !== 'estagios' && abaAtiva !== 'oportunidades' && filteredContent.length === 0 && (
            <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center text-gray-500 mt-10">
              <p>Nenhum resultado encontrado para os filtros aplicados.</p>
            </div>
