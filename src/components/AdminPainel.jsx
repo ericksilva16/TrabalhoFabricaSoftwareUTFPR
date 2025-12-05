@@ -19,11 +19,11 @@ export default function AdminPainel() {
   }, []);
 
   const abas = [
-    { key: "noticia", label: "Nova Notícia" },
+    { key: "estagios", label: "Vagas de Estágio" },
+    { key: "vaga", label: "Cadastrar Nova Vaga" },
     { key: "oportunidades", label: "Oportunidades" },
-    { key: "estagios", label: "Estágios" },
+    { key: "noticia", label: "Nova Notícia" },
     { key: "avisos", label: "Avisos" },
-    { key: "vaga", label: "Nova Vaga de Estágio" },
     // removi a aba "evento" temporariamente, pois o form não existe ainda
     { key: "info", label: "Nova Informação" },
   ];
@@ -52,17 +52,18 @@ export default function AdminPainel() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto mt-10">
-      <h2 className="text-3xl font-bold text-blue-900 mb-8 text-center">
-        Painel Administrativo
-      </h2>
+    <div className="max-w-6xl mx-auto mt-8 px-4">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-3xl font-bold text-blue-900">Painel Administrativo</h2>
+        <p className="text-sm text-gray-600">Gerencie conteúdo do portal com segurança.</p>
+      </div>
 
-      <div className="flex justify-center gap-4 mb-8 flex-wrap">
+      <div className="flex justify-start gap-2 mb-6 flex-wrap">
         {abas.map((aba) => (
           <button
             key={aba.key}
             onClick={() => setAbaAtiva(aba.key)}
-            className={`px-5 py-2 rounded-lg font-semibold transition-all border
+            className={`px-4 py-2 rounded-lg font-semibold transition-all border text-sm
               ${
                 abaAtiva === aba.key
                   ? "bg-blue-800 text-white border-blue-800"
@@ -74,7 +75,44 @@ export default function AdminPainel() {
         ))}
       </div>
 
-      <div className="mt-8">{renderForm()}</div>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div className="p-6">
+          {/* Header helper per tab */}
+          {abaAtiva === 'estagios' && (
+            <div className="mb-4">
+              <h3 className="text-xl font-semibold text-blue-900">Vagas de Estágio cadastradas</h3>
+              <p className="text-sm text-gray-600">Veja, filtre e gerencie as vagas existentes.</p>
+            </div>
+          )}
+          {abaAtiva === 'vaga' && (
+            <div className="mb-4">
+              <h3 className="text-xl font-semibold text-blue-900">Cadastrar nova vaga</h3>
+              <p className="text-sm text-gray-600">Preencha os campos para publicar uma nova vaga de estágio.</p>
+            </div>
+          )}
+          {abaAtiva === 'oportunidades' && (
+            <div className="mb-4">
+              <h3 className="text-xl font-semibold text-blue-900">Oportunidades</h3>
+              <p className="text-sm text-gray-600">Gerencie outras oportunidades disponíveis.</p>
+            </div>
+          )}
+          {abaAtiva === 'noticia' && (
+            <div className="mb-4">
+              <h3 className="text-xl font-semibold text-blue-900">Nova notícia</h3>
+              <p className="text-sm text-gray-600">Publique atualizações e comunicados importantes.</p>
+            </div>
+          )}
+          {abaAtiva === 'avisos' && (
+            <div className="mb-4">
+              <h3 className="text-xl font-semibold text-blue-900">Avisos</h3>
+              <p className="text-sm text-gray-600">Crie avisos rápidos para o portal.</p>
+            </div>
+          )}
+
+          {/* Conteúdo da aba */}
+          <div className="mt-2">{renderForm()}</div>
+        </div>
+      </div>
     </div>
   );
 }

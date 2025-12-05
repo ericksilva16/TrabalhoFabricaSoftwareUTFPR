@@ -30,7 +30,19 @@ export default function Estagios() {
         return;
       }
       const data = await res.json();
-      setItems(data);
+      // Merge extras salvos localmente, se existirem
+      let merged = data;
+      try {
+        const raw = localStorage.getItem('estagioExtras');
+        const map = raw ? JSON.parse(raw) : {};
+        if (map && typeof map === 'object') {
+          merged = (Array.isArray(data) ? data : []).map((d) => {
+            const extras = map[String(d?.id)];
+            return extras ? { ...d, ...extras } : d;
+          });
+        }
+      } catch (_) {}
+      setItems(merged);
       // Carregar IDs já inscritos, para sinalizar e desabilitar o botão
       if (token) {
         try {
@@ -100,10 +112,10 @@ export default function Estagios() {
             setor={"Estágio"}
             titulo={item.titulo}
             desc={item.descricao}
-            local={item.link || ""}
-            tel={""}
-            mail={""}
-            horario={item.dataLimite ? new Date(item.dataLimite).toLocaleDateString() : ""}
+            local={item.cidade || item.link || ""}
+            tel={item.telefone || ""}
+            mail={item.email || ""}
+            horario={item.horario || (item.dataLimite ? new Date(item.dataLimite).toLocaleDateString() : "")}
             actions={actions}
           />
         );

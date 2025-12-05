@@ -50,6 +50,12 @@ export default function AdminEstagios() {
             <div>
               <div className="font-semibold">{e.titulo}</div>
               <div className="text-sm text-gray-600">{e.dataLimite ? new Date(e.dataLimite).toLocaleDateString() : ''} • {e.status || ''}</div>
+              <div className="mt-1 text-sm text-gray-700">
+                {e.cidade && <span className="mr-2">Cidade: {e.cidade}</span>}
+                {e.telefone && <span className="mr-2">• Tel: {e.telefone}</span>}
+                {e.email && <span className="mr-2">• Email: {e.email}</span>}
+                {e.horario && <span>• Horário: {e.horario}</span>}
+              </div>
             </div>
             <div className="flex gap-2">
               <button onClick={() => abrirCandidatos(e)} className="px-3 py-1 bg-blue-600 text-white rounded">Candidatos</button>

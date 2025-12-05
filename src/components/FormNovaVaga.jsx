@@ -8,6 +8,10 @@ export default function FormNovaVaga() {
   const [link, setLink] = useState('');
   const [dataLimite, setDataLimite] = useState('');
   const [status, setStatus] = useState('ABERTO');
+  const [cidade, setCidade] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const [email, setEmail] = useState('');
+  const [horario, setHorario] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [items, setItems] = useState([]);
@@ -37,16 +41,37 @@ export default function FormNovaVaga() {
         link: link || null,
         dataLimite: dataLimite || null,
         status,
+        // campos extras apenas no cliente
+        cidade: cidade.trim() || null,
+        telefone: telefone.trim() || null,
+        email: email.trim() || null,
+        horario: horario.trim() || null,
       };
       const res = await fetch(`${API_BASE}/estagios`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          titulo: payload.titulo,
+          descricao: payload.descricao,
+          link: payload.link,
+          dataLimite: payload.dataLimite,
+          status: payload.status,
+        })
       });
       if (!res.ok) throw new Error('Falha ao criar estágio');
       const created = await res.json();
-      setItems(prev => [created, ...prev]);
+      // Mesclar os extras apenas no cliente para exibição
+      const withExtras = { ...created, cidade: payload.cidade, telefone: payload.telefone, email: payload.email, horario: payload.horario };
+      // Persistir extras localmente mapeados por ID para que apareçam nas listagens públicas
+      try {
+        const raw = localStorage.getItem('estagioExtras');
+        const map = raw ? JSON.parse(raw) : {};
+        map[String(created.id)] = { cidade: payload.cidade, telefone: payload.telefone, email: payload.email, horario: payload.horario };
+        localStorage.setItem('estagioExtras', JSON.stringify(map));
+      } catch (_) {}
+      setItems(prev => [withExtras, ...prev]);
       setTitulo(''); setDescricao(''); setLink(''); setDataLimite(''); setStatus('ABERTO');
+      setCidade(''); setTelefone(''); setEmail(''); setHorario('');
     } catch (e) { setError(e.message); }
     finally { setLoading(false); }
   }
@@ -97,6 +122,25 @@ export default function FormNovaVaga() {
           </div>
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Cidade</label>
+            <input value={cidade} onChange={e => setCidade(e.target.value)} placeholder="Ex.: Curitiba" className="mt-1 block w-full border rounded-md p-2" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Telefone</label>
+            <input value={telefone} onChange={e => setTelefone(e.target.value)} placeholder="(41) 99999-9999" className="mt-1 block w-full border rounded-md p-2" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <input value={email} onChange={e => setEmail(e.target.value)} placeholder="contato@empresa.com" className="mt-1 block w-full border rounded-md p-2" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Horário</label>
+            <input value={horario} onChange={e => setHorario(e.target.value)} placeholder="Ex.: 8h às 14h" className="mt-1 block w-full border rounded-md p-2" />
+          </div>
+        </div>
+
         <button type="submit" disabled={loading} className="w-full bg-blue-800 text-white font-semibold py-3 rounded-lg hover:bg-blue-900 transition-all mt-2">
           {loading ? 'Publicando...' : 'Publicar Vaga'}
         </button>
@@ -111,6 +155,12 @@ export default function FormNovaVaga() {
               <div>
                 <div className="font-semibold">{i.titulo}</div>
                 <div className="text-sm text-gray-600">{i.dataLimite ? new Date(i.dataLimite).toLocaleDateString() : ''}</div>
+                <div className="mt-1 text-sm text-gray-700">
+                  {i.cidade && <span className="mr-2">Cidade: {i.cidade}</span>}
+                  {i.telefone && <span className="mr-2">• Tel: {i.telefone}</span>}
+                  {i.email && <span className="mr-2">• Email: {i.email}</span>}
+                  {i.horario && <span>• Horário: {i.horario}</span>}
+                </div>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => handleDelete(i.id)} className="px-3 py-1 bg-red-600 text-white rounded">Excluir</button>
