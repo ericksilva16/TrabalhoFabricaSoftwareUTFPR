@@ -4,6 +4,7 @@ import FormNovaNoticia from "./FormNovaNoticia";
 import FormNovaInfo from "./FormNovaInfo";
 import AdminAvisos from "./AdminAvisos";
 import AdminOportunidades from "./AdminOportunidades";
+import AdminEstagios from "./AdminEstagios";
 import { isAdmin } from '../utils/auth';
 
 export default function AdminPainel() {
@@ -20,6 +21,7 @@ export default function AdminPainel() {
   const abas = [
     { key: "noticia", label: "Nova Notícia" },
     { key: "oportunidades", label: "Oportunidades" },
+    { key: "estagios", label: "Estágios" },
     { key: "avisos", label: "Avisos" },
     { key: "vaga", label: "Nova Vaga de Estágio" },
     // removi a aba "evento" temporariamente, pois o form não existe ainda
@@ -32,6 +34,8 @@ export default function AdminPainel() {
         return <FormNovaNoticia />;
       case "oportunidades":
         return <AdminOportunidades />;
+      case "estagios":
+        return <AdminEstagios />;
       case "avisos":
         return <AdminAvisos />;
       case "vaga":

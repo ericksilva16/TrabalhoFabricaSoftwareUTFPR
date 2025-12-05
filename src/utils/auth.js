@@ -36,3 +36,10 @@ export function isAdmin() {
   if (!role) return false;
   return String(role).toUpperCase() === 'ADMIN';
 }
+
+export function isAluno() {
+  const role = getUserRole();
+  if (!role) return false;
+  const r = String(role).toUpperCase();
+  return r === 'ALUNO' || r === 'ESTUDANTE';
+}

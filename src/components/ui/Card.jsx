@@ -1,7 +1,7 @@
 import React from 'react';
 import { MdPlace, MdPhone, MdEmail, MdAccessTime } from 'react-icons/md';
 
-export default function Card({ setor, titulo, desc, local, tel, mail, horario }) {
+export default function Card({ setor, titulo, desc, local, tel, mail, horario, actions }) {
     return (
         <div className="
             bg-white rounded-xl shadow p-6 w-full h-80 max-w-md mt-10 mx-auto border border-black/10
@@ -35,6 +35,11 @@ export default function Card({ setor, titulo, desc, local, tel, mail, horario })
                 <div className='bg-white p-2 rounded-lg w-fit mt-2 border border-black/10'>
                     <p className='text-[13px]'>{setor}</p>
                 </div>
+                {actions && (
+                    <div className="mt-4">
+                        {actions}
+                    </div>
+                )}
             </div>
         </div>
     );

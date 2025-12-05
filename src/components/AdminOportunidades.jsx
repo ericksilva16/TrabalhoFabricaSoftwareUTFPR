@@ -85,6 +85,8 @@ export default function AdminOportunidades() {
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(null);
   const [error, setError] = useState(null);
+  const [candidatos, setCandidatos] = useState(null); // null | array
+  const [candidatosDe, setCandidatosDe] = useState(null); // oportunidade selecionada
 
   function getToken() { try { return localStorage.getItem('token'); } catch { return null; } }
 
@@ -141,6 +143,21 @@ export default function AdminOportunidades() {
     } catch (e) { setError(e.message); }
   }
 
+  async function abrirCandidatos(oportunidade) {
+    setError(null);
+    setCandidatos(null);
+    setCandidatosDe(oportunidade);
+    try {
+      const res = await fetch(`${API_BASE}/oportunidades/${oportunidade.id}/candidatos`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
+      if (!res.ok) throw new Error('Falha ao buscar candidatos');
+      const data = await res.json();
+      setCandidatos(Array.isArray(data) ? data : []);
+    } catch (e) {
+      setError(e.message);
+      setCandidatos([]);
+    }
+  }
+
   return (
     <div>
       <h3 className="text-xl font-semibold mb-4">Gerenciar Oportunidades</h3>
@@ -163,6 +180,7 @@ export default function AdminOportunidades() {
                 <div className="flex gap-2">
                   <button onClick={() => setEditing(o)} className="px-3 py-1 bg-yellow-500 text-white rounded">Editar</button>
                   <button onClick={() => handleDelete(o.id)} className="px-3 py-1 bg-red-600 text-white rounded">Excluir</button>
+                  <button onClick={() => abrirCandidatos(o)} className="px-3 py-1 bg-blue-600 text-white rounded">Candidatos</button>
                 </div>
               </div>
             ))}
@@ -179,6 +197,30 @@ export default function AdminOportunidades() {
               <button onClick={() => setEditing(null)} className="text-gray-500">Fechar</button>
             </div>
             <OportunidadeForm initial={editing} tipos={tipos} onSubmit={(payload) => handleUpdate(editing.id, payload)} submitLabel="Salvar alterações" />
+          </div>
+        </div>
+      )}
+
+      {candidatosDe && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-3xl bg-white p-4 rounded-lg">
+            <div className="flex justify-between items-center mb-3">
+              <h4 className="text-lg font-semibold">Candidatos — {candidatosDe.titulo}</h4>
+              <button onClick={() => { setCandidatosDe(null); setCandidatos(null); }} className="text-gray-500">Fechar</button>
+            </div>
+            {!candidatos && <div>Carregando...</div>}
+            {candidatos && candidatos.length === 0 && <div className="text-gray-500">Nenhum candidato.</div>}
+            {candidatos && candidatos.length > 0 && (
+              <div className="divide-y">
+                {candidatos.map(c => (
+                  <div key={c.id} className="py-2">
+                    <div className="font-medium">{c.nome || 'Sem nome'}</div>
+                    <div className="text-sm text-gray-600">{c.email || ''}</div>
+                    <div className="text-sm text-gray-600">{c.curso || ''} {c.telefone ? `• ${c.telefone}` : ''}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
