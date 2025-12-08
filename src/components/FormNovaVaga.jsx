@@ -15,6 +15,7 @@ export default function FormNovaVaga() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [items, setItems] = useState([]);
+  const [savingId, setSavingId] = useState(null);
 
   function getToken() { try { return localStorage.getItem('token'); } catch { return null; } }
 
@@ -86,6 +87,21 @@ export default function FormNovaVaga() {
     } catch (e) { setError(e.message); }
   }
 
+  async function alterarStatus(id, novoStatus) {
+    setError(null);
+    setSavingId(id);
+    try {
+      const res = await fetch(`${API_BASE}/estagios/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+        body: JSON.stringify({ status: novoStatus })
+      });
+      if (!res.ok) throw new Error('Falha ao atualizar status');
+      setItems(prev => prev.map(i => i.id === id ? { ...i, status: novoStatus } : i));
+    } catch (e) { setError(e.message); }
+    finally { setSavingId(null); }
+  }
+
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
       <h3 className="text-xl font-bold mb-6">Gerenciar Vagas de Estágio</h3>
@@ -154,8 +170,21 @@ export default function FormNovaVaga() {
             <div key={i.id} className="bg-white p-3 rounded-lg shadow flex items-start justify-between">
               <div>
                 <div className="font-semibold">{i.titulo}</div>
-                <div className="text-sm text-gray-600">{i.dataLimite ? new Date(i.dataLimite).toLocaleDateString() : ''}</div>
-                <div className="mt-1 text-sm text-gray-700">
+                <div className="text-sm text-gray-600">{i.dataLimite ? new Date(i.dataLimite).toLocaleDateString() : ''} • {i.status || ''}</div>
+                <div className="mt-2">
+                  <label className="text-sm text-gray-700 mr-2">Status:</label>
+                  <select
+                    className="border rounded-md p-1 text-sm"
+                    value={i.status || 'ABERTO'}
+                    onChange={(ev)=> alterarStatus(i.id, ev.target.value)}
+                    disabled={savingId === i.id}
+                  >
+                    <option value="ABERTO">Aberto</option>
+                    <option value="FECHADO">Fechado</option>
+                    <option value="EM_ANDAMENTO">Em andamento</option>
+                  </select>
+                </div>
+                <div className="mt-2 text-sm text-gray-700">
                   {i.cidade && <span className="mr-2">Cidade: {i.cidade}</span>}
                   {i.telefone && <span className="mr-2">• Tel: {i.telefone}</span>}
                   {i.email && <span className="mr-2">• Email: {i.email}</span>}

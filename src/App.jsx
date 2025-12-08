@@ -92,8 +92,6 @@ export default function App() {
           </div>
         </>
       )}
-
-      {/* Removed sidebar animations; keeping UI minimal */}
     </div>
   );
 }
