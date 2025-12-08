@@ -19,7 +19,6 @@ export default function AdminPainel() {
   }, []);
 
   const abas = [
-    { key: "estagios", label: "Vagas de Estágio" },
     { key: "vaga", label: "Cadastrar Nova Vaga" },
     { key: "oportunidades", label: "Oportunidades" },
     { key: "noticia", label: "Nova Notícia" },
@@ -78,12 +77,6 @@ export default function AdminPainel() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200">
         <div className="p-6">
           {/* Header helper per tab */}
-          {abaAtiva === 'estagios' && (
-            <div className="mb-4">
-              <h3 className="text-xl font-semibold text-blue-900">Vagas de Estágio cadastradas</h3>
-              <p className="text-sm text-gray-600">Veja, filtre e gerencie as vagas existentes.</p>
-            </div>
-          )}
           {abaAtiva === 'vaga' && (
             <div className="mb-4">
               <h3 className="text-xl font-semibold text-blue-900">Cadastrar nova vaga</h3>

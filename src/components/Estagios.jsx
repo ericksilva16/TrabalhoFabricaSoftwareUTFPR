@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Card from "./ui/Card";
 import { isAluno } from "../utils/auth";
+import SearchInput from "./ui/SearchInput";
 
 const API_BASE = 'http://localhost:3000/api/v1';
 
@@ -106,11 +107,10 @@ export default function Estagios() {
         <h3 className="font-semibold mb-2">Filtros de estágio</h3>
         {/* Busca */}
         <div className="mb-3">
-          <input
+          <SearchInput
             value={q}
             onChange={(e)=>setQ(e.target.value)}
             placeholder="Buscar por título ou descrição"
-            className="w-full border rounded-md p-2 bg-white"
           />
         </div>
         {/* Chips de cidade */}
