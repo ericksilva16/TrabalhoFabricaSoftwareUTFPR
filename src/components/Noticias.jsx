@@ -60,7 +60,8 @@ function Noticias({ onNoticiaSelecionada }) {
                                 backgroundPosition: 'center'
                             } : {}}
                         >
-                            <div className="relative w-full md:w-4/5 p-6 md:p-12 mt-auto">
+                            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60 rounded-lg"></div>
+                            <div className="relative w-full md:w-4/5 p-6 md:p-12 mt-auto z-10">
                                 <h2 className="text-white mb-2 text-2xl md:text-3xl lg:text-4xl font-semibold line-clamp-2">{primeiraNoticia.titulo}</h2>
                                 <p className="text-white text-sm md:text-base line-clamp-1 mb-2">{truncarTexto(primeiraNoticia.descricao, 80)}</p>
                                 <button className="px-5 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 hover:shadow-xl transition duration-300 cursor-pointer">
@@ -85,7 +86,8 @@ function Noticias({ onNoticiaSelecionada }) {
                                     backgroundPosition: 'center'
                                 } : {}}
                             >
-                                <div className="relative w-full md:w-4/5 p-6 md:p-10 mt-auto">
+                                <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60 rounded-lg"></div>
+                                <div className="relative w-full md:w-4/5 p-6 md:p-10 mt-auto z-10">
                                     <h2 className="text-white mb-2 text-xl md:text-2xl font-semibold line-clamp-1">{noticia.titulo}</h2>
                                     <p className="text-white text-sm md:text-sm line-clamp-1 mb-2">{truncarTexto(noticia.descricao, 60)}</p>
                                     <button className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 hover:shadow-xl transition duration-300 cursor-pointer">
