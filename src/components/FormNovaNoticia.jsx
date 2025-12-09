@@ -40,7 +40,7 @@ export default function FormNovaNoticia() {
       const payload = {
         titulo,
         descricao,
-        imagemUrl: imageUrl || null,   // <-- corrigido
+        imagemUrl: imagemUrl || null,
         linkUrl: linkUrl || null
       };
       
