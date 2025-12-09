@@ -9,7 +9,7 @@ function getToken() {
 export default function FormNovaNoticia() {
   const [titulo, setTitulo] = useState('');
   const [descricao, setDescricao] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [imagemUrl, setImagemUrl] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
   const [noticias, setNoticias] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -40,7 +40,7 @@ export default function FormNovaNoticia() {
       const payload = {
         titulo,
         descricao,
-        imageUrl: imageUrl || null,
+        imagemUrl: imageUrl || null,   // <-- corrigido
         linkUrl: linkUrl || null
       };
       
@@ -57,7 +57,7 @@ export default function FormNovaNoticia() {
       
       setTitulo('');
       setDescricao('');
-      setImageUrl('');
+      setImagemUrl('');
       setLinkUrl('');
       fetchNoticias();
     } catch (e) {
@@ -121,8 +121,8 @@ export default function FormNovaNoticia() {
           <label className="block text-sm font-medium text-gray-700 mb-2">URL da Imagem</label>
           <input
             type="url"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
+            value={imagemUrl}
+            onChange={(e) => setImagemUrl(e.target.value)}
             placeholder="https://exemplo.com/imagem.jpg"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -158,9 +158,9 @@ export default function FormNovaNoticia() {
           noticias.map((noticia) => (
             <div key={noticia.id} className="p-4 border border-gray-200 rounded-lg bg-gray-50">
               <div className="flex justify-between items-start gap-4">
-                {noticia.imageUrl && (
+                {noticia.imagemUrl && (
                   <img
-                    src={noticia.imageUrl}
+                    src={noticia.imagemUrl}
                     alt={noticia.titulo}
                     className="w-20 h-20 object-cover rounded"
                   />

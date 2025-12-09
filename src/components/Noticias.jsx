@@ -55,8 +55,8 @@ function Noticias({ onNoticiaSelecionada }) {
                             className="relative md:flex-1 rounded-lg flex items-start justify-end flex-col 
                             bg-gradient-to-b from-transparent to-black/70
                             transform transition duration-200 hover:-translate-y-1 hover:shadow-lg cursor-pointer min-h-[300px] md:min-h-[420px] bg-gray-300"
-                            style={primeiraNoticia.imageUrl ? {
-                                backgroundImage: `url(${primeiraNoticia.imageUrl})`,
+                            style={primeiraNoticia.imagemUrl ? {
+                                backgroundImage: `url(${primeiraNoticia.imagemUrl})`,
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center'
                             } : {}}
@@ -80,8 +80,8 @@ function Noticias({ onNoticiaSelecionada }) {
                                 className="relative rounded-lg flex items-start justify-end flex-col 
                                 bg-gradient-to-b from-transparent to-black/70
                                 transform transition duration-200 hover:-translate-y-1 hover:shadow-lg cursor-pointer min-h-[140px] md:min-h-[200px] bg-gray-300"
-                                style={noticia.imageUrl ? {
-                                    backgroundImage: `url(${noticia.imageUrl})`,
+                                style={noticia.imagemUrl ? {
+                                    backgroundImage: `url(${noticia.imagemUrl})`,
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center'
                                 } : {}}
@@ -112,7 +112,7 @@ function Noticias({ onNoticiaSelecionada }) {
                                     onClick={() => handleNoticiaSelecionada(noticia)}
                                     className="cursor-pointer"
                                 >
-                                    <NewsCard titulo={noticia.titulo} descricao={noticia.descricao} imageUrl={noticia.imageUrl} linkUrl={noticia.linkUrl} data={noticia.createdAt} />
+                                    <NewsCard titulo={noticia.titulo} descricao={noticia.descricao} imagemUrl={noticia.imagemUrl} linkUrl={noticia.linkUrl} data={noticia.createdAt} />
                                 </div>
                             ))}
                         </div>

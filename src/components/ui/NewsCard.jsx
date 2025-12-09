@@ -1,7 +1,7 @@
 import React from "react";
 import newsPhoto from "../../assets/news-photo1.jpg";
 
-export default function NewsCard({ titulo, descricao, imageUrl, linkUrl, data }) {
+export default function NewsCard({ titulo, descricao, imagemUrl, linkUrl, data }) {
   const CardContent = () => (
     <div className="w-full bg-white rounded-3xl shadow p-4 sm:p-5 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-2 cursor-pointer">
       {/* Topo */}
@@ -21,7 +21,7 @@ export default function NewsCard({ titulo, descricao, imageUrl, linkUrl, data })
       <div className="w-full h-44 sm:h-48 mt-3 overflow-hidden rounded-xl">
         <img
           className="w-full h-full object-cover transform transition-transform duration-500 ease-in-out hover:scale-110"
-          src={imageUrl || newsPhoto}
+          src={imagemUrl || newsPhoto}
           alt={titulo || 'Notícia'}
         />
       </div>
