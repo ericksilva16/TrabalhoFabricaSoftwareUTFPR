@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react"
 import NewsCard from "./ui/NewsCard";
-import AvisoCard from "./ui/AvisoCard";
 
 const API_BASE = 'http://localhost:3000/api/v1';
 
@@ -118,24 +117,6 @@ function Noticias({ onNoticiaSelecionada }) {
                         </div>
                     </div>
                 )}
-
-                <div className="mt-12">
-                    <h2 className="text-2xl font-bold mb-6">Avisos</h2>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {noticias.length > 0 ? (
-                            noticias.slice(0, 2).map((aviso) => (
-                                <div key={aviso.id}>
-                                    <AvisoCard title={aviso.titulo} date={aviso.createdAt ? new Date(aviso.createdAt).toLocaleDateString('pt-BR') : ''}>
-                                        {aviso.descricao}
-                                    </AvisoCard>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="text-gray-500">Nenhum aviso disponível.</div>
-                        )}
-                    </div>
-                </div>
             </div>
         </>
     );
