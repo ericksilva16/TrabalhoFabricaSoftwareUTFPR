@@ -303,7 +303,6 @@ export default function Estagios() {
             mail={item.email || ""}
             horario={item.horario || (item.dataLimite ? new Date(item.dataLimite).toLocaleDateString() : "")}
             status={item.status}
-            tags={item.tags || []}
             cursos={item.cursos || []}
             actions={<div className="flex items-center">{actions}{favBtn}</div>}
           />

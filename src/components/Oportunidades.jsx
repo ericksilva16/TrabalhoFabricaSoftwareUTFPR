@@ -218,7 +218,6 @@ export default function Oportunidades() {
             tel={""}
             mail={""}
             horario={item.dataLimite ? new Date(item.dataLimite).toLocaleDateString() : ""}
-            tags={item.tags || []}
             cursos={item.cursos || []}
             actions={<div className="flex items-center">{actions}{favBtn}</div>}
           />
