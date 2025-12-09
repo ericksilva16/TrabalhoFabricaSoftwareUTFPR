@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Card from "./ui/Card";
-import { isAluno } from "../utils/auth";
+import { isAluno, getUserId } from "../utils/auth";
 import SearchInput from "./ui/SearchInput";
+import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
 
 const API_BASE = 'http://localhost:3000/api/v1';
 
@@ -17,6 +18,10 @@ export default function Estagios() {
   const [comTelefone, setComTelefone] = useState(false);
   const [comEmail, setComEmail] = useState(false);
   const [comHorario, setComHorario] = useState(false);
+  const [onlyFav, setOnlyFav] = useState(false);
+  const [favIds, setFavIds] = useState(new Set());
+  const [tagSel, setTagSel] = useState([]);
+  const [cursoSel, setCursoSel] = useState([]);
   const aluno = isAluno();
 
   async function fetchAll() {
@@ -51,6 +56,13 @@ export default function Estagios() {
         }
       } catch (_) {}
       setItems(merged);
+      // carregar favoritos
+      try {
+        const uid = getUserId();
+        const rawFav = localStorage.getItem(uid ? `favEstagios_${uid}` : 'favEstagios');
+        const arr = rawFav ? JSON.parse(rawFav) : [];
+        setFavIds(new Set((Array.isArray(arr) ? arr : []).map(String)));
+      } catch (_) {}
       // Carregar IDs já inscritos, para sinalizar e desabilitar o botão
       if (token) {
         try {
@@ -63,6 +75,19 @@ export default function Estagios() {
         } catch (_) {}
       }
     } finally { setLoading(false); }
+  }
+  function toggleFav(id) {
+    setFavIds(prev => {
+      const next = new Set(prev);
+      const key = String(id);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      try {
+        const uid = getUserId();
+        const storeKey = uid ? `favEstagios_${uid}` : 'favEstagios';
+        localStorage.setItem(storeKey, JSON.stringify(Array.from(next)));
+      } catch (_) {}
+      return next;
+    });
   }
 
   async function inscrever(id) {
@@ -181,6 +206,44 @@ export default function Estagios() {
           >
             Limpar filtros
           </button>
+          <button
+            className={`px-3 py-1 text-sm rounded-full transition border ${onlyFav ? 'bg-blue-800 text-white border-blue-800' : 'bg-white border-gray-300 hover:bg-gray-200'}`}
+            onClick={()=> setOnlyFav(v=>!v)}
+          >
+            Somente favoritos
+          </button>
+        </div>
+        {/* Tags */}
+        <div className="mt-3">
+          <div className="text-sm text-gray-600 mb-1">Tags</div>
+          <div className="flex flex-wrap gap-2">
+            {Array.from(new Set([].concat(...(items||[]).map(i=> Array.isArray(i.tags)? i.tags : [])))).map(t => (
+              <button
+                key={`tag-${t}`}
+                className={`px-3 py-1 text-sm rounded-full transition border ${tagSel.includes(t) ? 'bg-blue-800 text-white border-blue-800' : 'bg-white border-gray-300 hover:bg-gray-200'}`}
+                onClick={()=> setTagSel(prev => prev.includes(t) ? prev.filter(x=>x!==t) : [...prev, t])}
+              >{t}</button>
+            ))}
+            {tagSel.length>0 && (
+              <button className="ml-auto px-3 py-1 text-sm rounded-full transition border bg-white border-gray-300 hover:bg-gray-200" onClick={()=> setTagSel([])}>Limpar tags</button>
+            )}
+          </div>
+        </div>
+        {/* Cursos */}
+        <div className="mt-3">
+          <div className="text-sm text-gray-600 mb-1">Cursos</div>
+          <div className="flex flex-wrap gap-2">
+            {Array.from(new Set([].concat(...(items||[]).map(i=> Array.isArray(i.cursos)? i.cursos : [])))).map(c => (
+              <button
+                key={`curso-${c}`}
+                className={`px-3 py-1 text-sm rounded-full transition border ${cursoSel.includes(c) ? 'bg-blue-800 text-white border-blue-800' : 'bg-white border-gray-300 hover:bg-gray-200'}`}
+                onClick={()=> setCursoSel(prev => prev.includes(c) ? prev.filter(x=>x!==c) : [...prev, c])}
+              >{c}</button>
+            ))}
+            {cursoSel.length>0 && (
+              <button className="ml-auto px-3 py-1 text-sm rounded-full transition border bg-white border-gray-300 hover:bg-gray-200" onClick={()=> setCursoSel([])}>Limpar cursos</button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -199,9 +262,13 @@ export default function Estagios() {
         .filter((it)=> comTelefone ? Boolean(it.telefone) : true)
         .filter((it)=> comEmail ? Boolean(it.email) : true)
         .filter((it)=> comHorario ? Boolean(it.horario) : true)
+        .filter((it)=> onlyFav ? favIds.has(String(it.id)) : true)
+        .filter((it)=> tagSel.length ? (Array.isArray(it.tags) && tagSel.every(t=> it.tags.includes(t))) : true)
+        .filter((it)=> cursoSel.length ? (Array.isArray(it.cursos) && cursoSel.every(c=> it.cursos.includes(c))) : true)
       ).map((item) => {
         const jaInscrito = inscritosIds.has(String(item.id));
         const fechado = String(item.status || '').toUpperCase() === 'FECHADO';
+        const isFav = favIds.has(String(item.id));
         const actions = aluno ? (
           <button
             onClick={() => !jaInscrito && !fechado && inscrever(item.id)}
@@ -215,6 +282,15 @@ export default function Estagios() {
             {jaInscrito ? 'Inscrito' : (fechado ? 'Inscrições encerradas' : 'Inscrever-se')}
           </button>
         ) : null;
+        const favBtn = (
+          <button
+            onClick={()=> toggleFav(item.id)}
+            className={`ml-2 p-2 rounded-full border ${isFav ? 'bg-pink-100 border-pink-300 text-pink-700' : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-200'}`}
+            title={isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+          >
+            {isFav ? <MdFavorite size={18} /> : <MdFavoriteBorder size={18} />}
+          </button>
+        );
 
         return (
           <Card
@@ -227,11 +303,13 @@ export default function Estagios() {
             mail={item.email || ""}
             horario={item.horario || (item.dataLimite ? new Date(item.dataLimite).toLocaleDateString() : "")}
             status={item.status}
-            actions={actions}
+            tags={item.tags || []}
+            cursos={item.cursos || []}
+            actions={<div className="flex items-center">{actions}{favBtn}</div>}
           />
         );
       })}
-      {items.length === 0 && !loading && (
+        {items.length === 0 && !loading && (
         <div className="col-span-1 md:col-span-2 lg:col-span-3 text-gray-500">Nenhum estágio encontrado.</div>
       )}
       </div>

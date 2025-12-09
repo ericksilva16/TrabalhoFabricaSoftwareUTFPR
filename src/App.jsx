@@ -4,7 +4,7 @@ import Header from "./components/Header";
 import Login from "./components/ui/Login";
 import Menu from "./components/Menu";
 import AdminPainel from "./components/AdminPainel";
-import { isAdmin as checkIsAdmin } from './utils/auth';
+import { isAdmin as checkIsAdmin, getUserId, migrateFavoritesForUser } from './utils/auth';
 
 export default function App() {
   // Remove sidebar flow; gate with full-screen login instead
@@ -18,6 +18,11 @@ export default function App() {
     try { localStorage.setItem('user', JSON.stringify(data.user)); } catch (e) {}
     setUser(data.user);
     setIsAdmin(checkIsAdmin());
+    // Migrate legacy favorites to per-user keys
+    try {
+      const uid = getUserId();
+      if (uid) migrateFavoritesForUser(uid);
+    } catch (_) {}
   };
 
   // -------- ADMIN MODE --------

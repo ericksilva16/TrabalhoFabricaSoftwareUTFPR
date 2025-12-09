@@ -43,3 +43,53 @@ export function isAluno() {
   const r = String(role).toUpperCase();
   return r === 'ALUNO' || r === 'ESTUDANTE';
 }
+
+// Stable per-user identifier to key client-side data like favorites
+export function getUserId() {
+  const token = getToken();
+  const payload = decodeJwt(token);
+  if (payload) {
+    return payload.sub || payload.userId || payload.id || payload.uid || null;
+  }
+  try {
+    const raw = localStorage.getItem('user');
+    const user = raw ? JSON.parse(raw) : null;
+    if (!user) return null;
+    return user.id || user.userId || user.uid || user.email || null;
+  } catch (_) {
+    return null;
+  }
+}
+
+// Migrate generic favorites keys to per-user keys after login
+export function migrateFavoritesForUser(userId) {
+  if (!userId) return;
+  try {
+    const legacyEst = localStorage.getItem('favEstagios');
+    if (legacyEst) {
+      const arr = JSON.parse(legacyEst);
+      const key = `favEstagios_${userId}`;
+      const existing = localStorage.getItem(key);
+      const merged = Array.from(new Set([...
+        (Array.isArray(arr) ? arr.map(String) : []),
+        ...(existing ? JSON.parse(existing).map(String) : [])
+      ]));
+      localStorage.setItem(key, JSON.stringify(merged));
+      localStorage.removeItem('favEstagios');
+    }
+  } catch (_) {}
+  try {
+    const legacyOpp = localStorage.getItem('favOportunidades');
+    if (legacyOpp) {
+      const arr = JSON.parse(legacyOpp);
+      const key = `favOportunidades_${userId}`;
+      const existing = localStorage.getItem(key);
+      const merged = Array.from(new Set([...
+        (Array.isArray(arr) ? arr.map(String) : []),
+        ...(existing ? JSON.parse(existing).map(String) : [])
+      ]));
+      localStorage.setItem(key, JSON.stringify(merged));
+      localStorage.removeItem('favOportunidades');
+    }
+  } catch (_) {}
+}

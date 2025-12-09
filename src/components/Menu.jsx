@@ -163,6 +163,7 @@ export default function Menu() {
   const [abaAtiva, setAbaAtiva] = useState("universidade");
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilters, setActiveFilters] = useState({});
+  const [noticiaSelecionada, setNoticiaSelecionada] = useState(null);
 
   const filtrosPorAba = {
     universidade: {
@@ -202,7 +203,6 @@ export default function Menu() {
     { key: "noticias", label: "Notícias" },
     { key: "oportunidades", label: "Oportunidades" },
     { key: "estagios", label: "Estágios" },
-    { key: "eventos", label: "Eventos" },
   ];
   const abas = isAluno()
     ? [...abasBase, { key: "minhas", label: "Minhas Inscrições" }]
@@ -217,7 +217,16 @@ export default function Menu() {
       };
     });
   };
-  
+
+  const handleNoticiaSelecionada = (noticia) => {
+    if (noticia?.linkUrl && noticia.linkUrl.trim() !== '') {
+      // Se tem link externo válido, abre em nova aba
+      window.open(noticia.linkUrl, '_blank');
+    } else {
+      // Caso contrário, salva como selecionada
+      setNoticiaSelecionada(noticia);
+    }
+  };
   // Limpa filtros ao trocar de aba
   const handleAbaClick = (abaKey) => {
     setAbaAtiva(abaKey);
@@ -335,7 +344,7 @@ export default function Menu() {
       <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center mt-10 mb-20">
         {abaAtiva === "noticias" ? (
           <div className="col-span-1 md:col-span-2 lg:col-span-3">
-            <Noticias />
+            <Noticias onNoticiaSelecionada={handleNoticiaSelecionada} />
           </div>
         ) : abaAtiva === "estagios" ? (
           <div className="col-span-1 md:col-span-2 lg:col-span-3">

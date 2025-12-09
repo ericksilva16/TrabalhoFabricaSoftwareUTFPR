@@ -9,6 +9,10 @@ function OportunidadeForm({ initial = {}, tipos = [], onSubmit, submitLabel = 'S
   const [dataLimite, setDataLimite] = useState(initial.dataLimite ? initial.dataLimite.slice(0,10) : '');
   const [tipoId, setTipoId] = useState(initial.tipoOportunidadeId || '');
   const [loading, setLoading] = useState(false);
+  const [tags, setTags] = useState(initial.tags || []);
+  const [tagInput, setTagInput] = useState('');
+  const [cursos, setCursos] = useState(initial.cursos || []);
+  const [cursoInput, setCursoInput] = useState('');
 
   // Initialize from `initial` only when `initial` changes (e.g. editing an item).
   // Do NOT depend on `tipos` here — otherwise when tipos load they would
@@ -21,6 +25,8 @@ function OportunidadeForm({ initial = {}, tipos = [], onSubmit, submitLabel = 'S
       setLink(initial.link || '');
       setDataLimite(initial.dataLimite ? initial.dataLimite.slice(0,10) : '');
       setTipoId(initial.tipoOportunidadeId || '');
+      setTags(initial.tags || []);
+      setCursos(initial.cursos || []);
     }
   }, [initial?.id]);
 
@@ -36,7 +42,7 @@ function OportunidadeForm({ initial = {}, tipos = [], onSubmit, submitLabel = 'S
     e.preventDefault();
     setLoading(true);
     try {
-      await onSubmit({ titulo: titulo.trim(), descricao: descricao.trim(), link: link || null, dataLimite: dataLimite || null, tipoOportunidadeId: Number(tipoId) });
+      await onSubmit({ titulo: titulo.trim(), descricao: descricao.trim(), link: link || null, dataLimite: dataLimite || null, tipoOportunidadeId: Number(tipoId), tags, cursos });
     } finally {
       setLoading(false);
     }
@@ -70,6 +76,40 @@ function OportunidadeForm({ initial = {}, tipos = [], onSubmit, submitLabel = 'S
         <select value={tipoId} onChange={e => setTipoId(e.target.value)} required className="mt-1 block w-full border rounded-md p-2">
           {tipos.map(t => <option key={t.id} value={t.id}>{t.nome}</option>)}
         </select>
+      </div>
+
+      {/* Tags e Cursos (cliente) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Tags</label>
+          <div className="flex flex-wrap items-center gap-2 mt-1">
+            <input value={tagInput} onChange={e=>setTagInput(e.target.value)} placeholder="Ex.: Remoto" className="min-w-0 flex-1 border rounded-md p-2" />
+            <button type="button" onClick={() => { const t = tagInput.trim(); if (t && !tags.includes(t)) { setTags([...tags, t]); setTagInput(''); } }} className="px-3 py-2 bg-blue-600 text-white rounded shrink-0">Adicionar</button>
+          </div>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {tags.map(t => (
+              <span key={t} className="px-2 py-1 rounded-full text-sm border bg-gray-100">
+                {t}
+                <button type="button" className="ml-2 text-gray-500" onClick={() => setTags(tags.filter(x=>x!==t))}>×</button>
+              </span>
+            ))}
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Cursos</label>
+          <div className="flex flex-wrap items-center gap-2 mt-1">
+            <input value={cursoInput} onChange={e=>setCursoInput(e.target.value)} placeholder="Ex.: Engenharia de Software" className="min-w-0 flex-1 border rounded-md p-2" />
+            <button type="button" onClick={() => { const c = cursoInput.trim(); if (c && !cursos.includes(c)) { setCursos([...cursos, c]); setCursoInput(''); } }} className="px-3 py-2 bg-blue-600 text-white rounded shrink-0">Adicionar</button>
+          </div>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {cursos.map(c => (
+              <span key={c} className="px-2 py-1 rounded-full text-sm border bg-gray-100">
+                {c}
+                <button type="button" className="ml-2 text-gray-500" onClick={() => setCursos(cursos.filter(x=>x!==c))}>×</button>
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="flex gap-2">
@@ -115,20 +155,24 @@ export default function AdminOportunidades() {
   async function handleCreate(payload) {
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/oportunidades`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` }, body: JSON.stringify(payload) });
+      const res = await fetch(`${API_BASE}/oportunidades`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` }, body: JSON.stringify({ titulo: payload.titulo, descricao: payload.descricao, link: payload.link, dataLimite: payload.dataLimite, tipoOportunidadeId: payload.tipoOportunidadeId }) });
       if (!res.ok) throw new Error('Falha ao criar oportunidade');
       const created = await res.json();
-      setOportunidades(prev => [created, ...prev]);
+      // Merge client-only extras
+      const withExtras = { ...created, tags: payload.tags || [], cursos: payload.cursos || [] };
+      setOportunidades(prev => [withExtras, ...prev]);
     } catch (e) { setError(e.message); }
   }
 
   async function handleUpdate(id, payload) {
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/oportunidades/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` }, body: JSON.stringify(payload) });
+      const res = await fetch(`${API_BASE}/oportunidades/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` }, body: JSON.stringify({ titulo: payload.titulo, descricao: payload.descricao, link: payload.link, dataLimite: payload.dataLimite, tipoOportunidadeId: payload.tipoOportunidadeId }) });
       if (!res.ok) throw new Error('Falha ao atualizar');
       const updated = await res.json();
-      setOportunidades(prev => prev.map(o => o.id === updated.id ? updated : o));
+      // Keep client extras in list item
+      const withExtras = { ...updated, tags: payload.tags || [], cursos: payload.cursos || [] };
+      setOportunidades(prev => prev.map(o => o.id === updated.id ? withExtras : o));
       setEditing(null);
     } catch (e) { setError(e.message); }
   }

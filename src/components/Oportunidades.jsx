@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Card from "./ui/Card";
 import SearchInput from "./ui/SearchInput";
-import { isAluno } from "../utils/auth";
+import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
+import { isAluno, getUserId } from "../utils/auth";
 
 const API_BASE = 'http://localhost:3000/api/v1';
 
@@ -13,6 +14,10 @@ export default function Oportunidades() {
   const [q, setQ] = useState("");
   const [inscritasIds, setInscritasIds] = useState(new Set());
   const aluno = isAluno();
+  const [favIds, setFavIds] = useState(new Set());
+  const [onlyFav, setOnlyFav] = useState(false);
+  const [tagSel, setTagSel] = useState([]);
+  const [cursoSel, setCursoSel] = useState([]);
 
   async function fetchAll() {
     setLoading(true);
@@ -34,6 +39,13 @@ export default function Oportunidades() {
       }
       const data = await res.json();
       setItems(data);
+      // carregar favoritos
+      try {
+        const uid = getUserId();
+        const rawFav = localStorage.getItem(uid ? `favOportunidades_${uid}` : 'favOportunidades');
+        const arr = rawFav ? JSON.parse(rawFav) : [];
+        setFavIds(new Set((Array.isArray(arr) ? arr : []).map(String)));
+      } catch (_) {}
       if (token) {
         try {
           const r2 = await fetch(`${API_BASE}/oportunidades/inscritas`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -75,13 +87,30 @@ export default function Oportunidades() {
 
   useEffect(() => { fetchAll(); }, []);
 
+  function toggleFav(id) {
+    setFavIds(prev => {
+      const next = new Set(prev);
+      const key = String(id);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      try {
+        const uid = getUserId();
+        const storeKey = uid ? `favOportunidades_${uid}` : 'favOportunidades';
+        localStorage.setItem(storeKey, JSON.stringify(Array.from(next)));
+      } catch (_) {}
+      return next;
+    });
+  }
+
   const tipos = Array.from(new Set(items.map(i => (i.tipo?.nome || 'Oportunidade'))));
   const filteredItems = (selectedTipo ? items.filter(i => (i.tipo?.nome || 'Oportunidade') === selectedTipo) : items)
     .filter(i => {
       if (!q) return true;
       const text = `${i.titulo || ''} ${i.descricao || ''}`.toLowerCase();
       return text.includes(q.toLowerCase());
-    });
+    })
+    .filter(i => onlyFav ? favIds.has(String(i.id)) : true)
+    .filter(i => tagSel.length ? (Array.isArray(i.tags) && tagSel.every(t=> i.tags.includes(t))) : true)
+    .filter(i => cursoSel.length ? (Array.isArray(i.cursos) && cursoSel.every(c=> i.cursos.includes(c))) : true);
 
   return (
     <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
@@ -112,6 +141,42 @@ export default function Oportunidades() {
                   {t}
                 </button>
               ))}
+              <button
+                className={`ml-auto px-3 py-1 text-sm rounded-full transition border ${onlyFav ? 'bg-blue-800 text-white border-blue-800' : 'bg-white border-gray-300 hover:bg-gray-200'}`}
+                onClick={()=> setOnlyFav(v=>!v)}
+              >
+                Somente favoritos
+              </button>
+            </div>
+            <div className="mt-3">
+              <div className="text-sm text-gray-600 mb-1">Tags</div>
+              <div className="flex flex-wrap gap-2">
+                {Array.from(new Set([].concat(...(items||[]).map(i=> Array.isArray(i.tags)? i.tags : [])))).map(t => (
+                  <button
+                    key={`tag-${t}`}
+                    className={`px-3 py-1 text-sm rounded-full transition border ${tagSel.includes(t) ? 'bg-blue-800 text-white border-blue-800' : 'bg-white border-gray-300 hover:bg-gray-200'}`}
+                    onClick={()=> setTagSel(prev => prev.includes(t) ? prev.filter(x=>x!==t) : [...prev, t])}
+                  >{t}</button>
+                ))}
+                {tagSel.length>0 && (
+                  <button className="ml-auto px-3 py-1 text-sm rounded-full transition border bg-white border-gray-300 hover:bg-gray-200" onClick={()=> setTagSel([])}>Limpar tags</button>
+                )}
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="text-sm text-gray-600 mb-1">Cursos</div>
+              <div className="flex flex-wrap gap-2">
+                {Array.from(new Set([].concat(...(items||[]).map(i=> Array.isArray(i.cursos)? i.cursos : [])))).map(c => (
+                  <button
+                    key={`curso-${c}`}
+                    className={`px-3 py-1 text-sm rounded-full transition border ${cursoSel.includes(c) ? 'bg-blue-800 text-white border-blue-800' : 'bg-white border-gray-300 hover:bg-gray-200'}`}
+                    onClick={()=> setCursoSel(prev => prev.includes(c) ? prev.filter(x=>x!==c) : [...prev, c])}
+                  >{c}</button>
+                ))}
+                {cursoSel.length>0 && (
+                  <button className="ml-auto px-3 py-1 text-sm rounded-full transition border bg-white border-gray-300 hover:bg-gray-200" onClick={()=> setCursoSel([])}>Limpar cursos</button>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -119,6 +184,7 @@ export default function Oportunidades() {
 
       {filteredItems.map((item) => {
         const jaInscrito = inscritasIds.has(String(item.id));
+        const isFav = favIds.has(String(item.id));
         const actions = aluno ? (
           <button
             onClick={() => !jaInscrito && inscrever(item.id)}
@@ -132,6 +198,15 @@ export default function Oportunidades() {
             {jaInscrito ? 'Inscrito' : 'Inscrever-se'}
           </button>
         ) : null;
+        const favBtn = (
+          <button
+            onClick={()=> toggleFav(item.id)}
+            className={`ml-2 p-2 rounded-full border ${isFav ? 'bg-pink-100 border-pink-300 text-pink-700' : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-200'}`}
+            title={isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+          >
+            {isFav ? <MdFavorite size={18} /> : <MdFavoriteBorder size={18} />}
+          </button>
+        );
 
         return (
           <Card
@@ -143,7 +218,9 @@ export default function Oportunidades() {
             tel={""}
             mail={""}
             horario={item.dataLimite ? new Date(item.dataLimite).toLocaleDateString() : ""}
-            actions={actions}
+            tags={item.tags || []}
+            cursos={item.cursos || []}
+            actions={<div className="flex items-center">{actions}{favBtn}</div>}
           />
         );
       })}

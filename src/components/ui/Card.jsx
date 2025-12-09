@@ -1,7 +1,7 @@
 import React from 'react';
 import { MdPlace, MdPhone, MdEmail, MdAccessTime } from 'react-icons/md';
 
-export default function Card({ setor, titulo, desc, local, tel, mail, horario, status, actions, descMax = 160, titleMax = 60 }) {
+export default function Card({ setor, titulo, desc, local, tel, mail, horario, status, actions, descMax = 160, titleMax = 60, tags = [], cursos = [] }) {
     const shortDesc = (() => {
         if (!desc) return '';
         const text = String(desc);
@@ -30,7 +30,7 @@ export default function Card({ setor, titulo, desc, local, tel, mail, horario, s
     })();
     return (
         <div className="
-            bg-white rounded-xl shadow p-6 w-full h-80 max-w-md mt-10 mx-auto border border-black/10
+            bg-white rounded-xl shadow p-6 w-full max-w-md mt-10 mx-auto border border-black/10 overflow-hidden
             transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:border-blue-500 cursor-pointer
         ">
             <div>
@@ -50,6 +50,16 @@ export default function Card({ setor, titulo, desc, local, tel, mail, horario, s
                 <p className="mt-2 text-gray-700 overflow-hidden">
                     {shortDesc}
                 </p>
+                {(tags?.length || cursos?.length) && (
+                    <div className="flex flex-wrap gap-2 mt-3">
+                        {tags?.map((t, idx) => (
+                            <span key={`tag-${idx}`} className="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">{t}</span>
+                        ))}
+                        {cursos?.map((c, idx) => (
+                            <span key={`curso-${idx}`} className="text-xs px-2 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">{c}</span>
+                        ))}
+                    </div>
+                )}
             </div>
 
             <div className="mt-4 space-y-1 text-gray-600">

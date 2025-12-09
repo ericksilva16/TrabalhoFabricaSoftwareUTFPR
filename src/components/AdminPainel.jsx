@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import FormNovaVaga from "./FormNovaVaga";
 import FormNovaNoticia from "./FormNovaNoticia";
-import FormNovaInfo from "./FormNovaInfo";
 import AdminAvisos from "./AdminAvisos";
 import AdminOportunidades from "./AdminOportunidades";
 import AdminEstagios from "./AdminEstagios";
@@ -23,8 +22,6 @@ export default function AdminPainel() {
     { key: "oportunidades", label: "Oportunidades" },
     { key: "noticia", label: "Nova Notícia" },
     { key: "avisos", label: "Avisos" },
-    // removi a aba "evento" temporariamente, pois o form não existe ainda
-    { key: "info", label: "Nova Informação" },
   ];
 
   const renderForm = () => {
@@ -39,12 +36,6 @@ export default function AdminPainel() {
         return <AdminAvisos />;
       case "vaga":
         return <FormNovaVaga />;
-      // caso queira adicionar o evento depois, basta criar o arquivo FormNovoEvento.jsx
-      // e descomentar a linha abaixo:
-      // case "evento":
-      //   return <FormNovoEvento />;
-      case "info":
-        return <FormNovaInfo />;
       default:
         return null;
     }
